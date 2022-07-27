@@ -1,0 +1,13 @@
+{
+	"name": "create-token",
+	"build": {
+		"dockerfile": "Dockerfile",
+	},
+	"extensions": [
+		"golang.Go",
+		"davidanson.vscode-markdownlint",
+		"redhat.vscode-yaml"
+	],
+	"postCreateCommand": "pre-commit install",
+	"remoteUser": "vscode"
+}

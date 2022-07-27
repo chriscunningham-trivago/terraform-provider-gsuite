@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strings"
 
-	"cloud.google.com/go/compute/metadata"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/pathorcontents"
 	"github.com/pkg/errors"
@@ -94,15 +93,8 @@ func (c *Config) loadAndValidate(terraformVersion string) error {
 		// your service account.
 		client = conf.Client(context.Background())
 	} else if c.ImpersonatedUserEmail != "" {
-		// try reaching the metadata endpoint
-		serviceAccount, err := metadata.Get("/instance/service-accounts/default/email")
-		if err != nil {
-			return errors.Wrap(err, "failed to get service account from metadata server")
-		}
-		log.Printf("[INFO] Authenticating using credentials from metadata server")
-
 		tokenSource, err := impersonate.CredentialsTokenSource(context.Background(), impersonate.CredentialsConfig{
-			TargetPrincipal: serviceAccount,
+			TargetPrincipal: c.ImpersonatedUserEmail,
 			Scopes:          oauthScopes,
 			Subject:         c.ImpersonatedUserEmail,
 		})
